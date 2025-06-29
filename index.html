@@ -26,8 +26,7 @@
         .font-game {
             font-family: 'Press Start 2P', cursive;
         }
-        /* Анімація для курсора в терміналі (закоментовано, але залишено на випадок потреби) */
-        /*
+        /* Анімація для курсора в терміналі */
         .blinking-cursor {
             display: inline-block;
             background-color: #34D399;
@@ -39,9 +38,7 @@
             from, to { background-color: transparent }
             50% { background-color: #34D399; }
         }
-        */
-        /* Стилізація кнопок вибору (закоментовано) */
-        /*
+        /* Стилізація кнопок вибору */
         .choice-btn {
             transition: all 0.2s ease-in-out;
         }
@@ -49,13 +46,11 @@
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(236, 72, 153, 0.7);
         }
-        */
         /* Клас для приховування екранів */
         .hidden {
             display: none;
         }
-        /* Стилізація модального вікна (закоментовано) */
-        /*
+        /* Стилізація модального вікна */
         #modal-backdrop {
             position: fixed;
             top: 0;
@@ -72,7 +67,6 @@
             transform: translate(-50%, -50%);
             z-index: 50;
         }
-        */
 
         /* Стилі для HP-бару */
         .hp-bar-container {
@@ -144,37 +138,34 @@
     <!-- Головний контейнер для всіх екранів -->
     <div id="app-container" class="relative w-full h-screen">
 
-        <!-- Екран 1: Завантаження / Пролог (закоментовано) -->
-        <!--
+        <!-- Екран 1: Завантаження / Пролог -->
         <div id="loader-screen" class="w-full h-full flex flex-col items-center justify-center p-4 bg-black">
             <div class="w-full max-w-2xl font-game text-sm md:text-base text-green-400">
                 <pre id="terminal-output" class="whitespace-pre-wrap"></pre>
             </div>
             <div id="agent-profile" class="hidden mt-8 text-center animate-pulse">
+                <!-- ЗАМІНІТЬ ЦЕ ПОСИЛАННЯ НА ФОТО ЮЛІ -->
                 <img src="https://placehold.co/200x200/EC4899/FFFFFF?text=AGENT+JJ-27" alt="Фото агента Юлі" class="rounded-full border-4 border-pink-500 mx-auto mb-4">
                 <button id="start-mission-btn" class="font-game bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 transition-all">ПОЧАТИ МІСІЮ</button>
             </div>
         </div>
-        -->
 
-        <!-- Екран 2: Інтерактивна карта світів (закоментовано) -->
-        <!--
+        <!-- Екран 2: Інтерактивна карта світів -->
         <div id="map-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/1F2937/4B5563?text=Карта+Всратосвіту');">
             <div class="bg-black bg-opacity-70 p-8 rounded-xl shadow-2xl">
                 <h1 class="font-game text-2xl md:text-4xl text-center text-pink-500 mb-8">Карта Всратосвіту</h1>
                 <div id="levels-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <!-- Іконки рівнів будуть додані сюди через JS -->
                 </div>
             </div>
         </div>
-        -->
         
-        <!-- Екран 3: Рівень-квест (контейнер) (закоментовано) -->
-        <!--
+        <!-- Екран 3: Рівень-квест (контейнер) -->
         <div id="level-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-gray-900 bg-opacity-90">
             <div id="level-content" class="w-full max-w-3xl text-center bg-gray-800 p-8 rounded-xl shadow-2xl border-2 border-pink-500">
+                <!-- Контент рівня буде доданий сюди через JS -->
             </div>
         </div>
-        -->
         
         <!-- Екран 4: Фінальна битва -->
         <div id="final-battle-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-black text-center">
@@ -200,8 +191,7 @@
             </form>
         </div>
 
-        <!-- Екран 5: Нагорода (закоментовано) -->
-        <!--
+        <!-- Екран 5: Нагорода -->
         <div id="reward-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/4C1D95/A78BFA?text=Перемога!');">
             <div class="bg-black bg-opacity-75 p-10 rounded-xl border-4 border-yellow-400 text-center">
                 <h1 class="font-game text-2xl md:text-3xl text-yellow-400 mb-4">ПЕРЕМОГА!</h1>
@@ -214,22 +204,25 @@
                 </button>
             </div>
         </div>
-        -->
         
-        <!-- Екран 6: Галерея (закоментовано) -->
-        <!--
+        <!-- Екран 6: Галерея -->
         <div id="gallery-screen" class="hidden w-full h-full overflow-y-auto p-8 bg-gray-900">
+            <!-- UPDATED: Заголовок галереї -->
             <h1 class="font-game text-4xl text-center text-pink-500 mb-8">Тусовочний Всесвіт Юлі</h1>
             <div class="max-w-6xl mx-auto">
+                <!-- UPDATED: Секція 1 -->
                 <h2 class="font-game text-2xl text-green-400 mb-4">Виконані місії по анігіляції алкогольних напоїв</h2>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- ЗАМІНІТЬ ЦІ ЗОБРАЖЕННЯ НА РЕАЛЬНІ ФОТО МІСІЙ -->
                     <img src="11.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
                     <img src="22.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
                     <img src="33.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
                     <img src="44.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
                 </div>
+                <!-- UPDATED: Секція 2 -->
                 <h2 class="font-game text-2xl text-green-400 mb-4">Члени команди агента</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <!-- ЗАМІНІТЬ ЦІ БЛОКИ НА ВАШІ ВІДЕО -->
                     <div class="bg-gray-800 p-2 rounded-lg">
                         <video controls class="w-full rounded-md">
                             <source src="111.mp4" type="video/mp4">
@@ -237,27 +230,26 @@
                         </video>
                         <p class="text-center mt-2">Міжнародна співпраця з агентами Інтерполу</p>
                     </div>
-                    <div class="bg-gray-800 p-2 rounded-lg">
+                       <div class="bg-gray-800 p-2 rounded-lg">
                         <video controls class="w-full rounded-md">
                             <source src="222.mp4" type="video/mp4">
                             Ваш браузер не підтримує відео.
                         </video>
                         <p class="text-center mt-2">Втирання в довіру під прикриттям</p>
                     </div>
-                </div>
-                <h2 class="font-game text-2xl text-green-400 mb-4">Фейкові нагороди</h2>
-                <div class="space-y-4 text-lg">
+                   </div>
+                   <!-- Секція 3: Нагороди -->
+                   <h2 class="font-game text-2xl text-green-400 mb-4">Фейкові нагороди</h2>
+                   <div class="space-y-4 text-lg">
                     <p class="bg-gray-800 p-3 rounded-lg">🏅 Орден "Пластикового Стільця І ступеня"</p>
                     <p class="bg-gray-800 p-3 rounded-lg">🏅 Медаль "За взяття паркану"</p>
                     <p class="bg-gray-800 p-3 rounded-lg">🏆 Премія "Міс Крєветка 2025"</p>
-                </div>
-            </div>
-            <button id="back-to-reward-btn" class="font-game fixed top-4 right-4 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-all">Назад</button>
+                   </div>
+               </div>
+               <button id="back-to-reward-btn" class="font-game fixed top-4 right-4 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-all">Назад</button>
         </div>
-        -->
 
-        <!-- Модальне вікно для результатів (закоментовано) -->
-        <!--
+        <!-- Модальне вікно для результатів -->
         <div id="modal-container" class="hidden">
             <div id="modal-backdrop"></div>
             <div id="modal" class="w-11/12 max-w-md bg-gray-800 rounded-xl p-6 text-center border-4">
@@ -265,7 +257,6 @@
                 <button id="modal-close-btn" class="mt-6 font-game bg-pink-600 text-white py-2 px-6 rounded-lg hover:bg-pink-700 transition-all">ДАЛІ</button>
             </div>
         </div>
-        -->
 
         <!-- Оверлей для атак боса -->
         <div id="boss-attack-overlay"></div>
@@ -275,13 +266,25 @@
     <script>
         // --- ГЛОБАЛЬНІ НАЛАШТУВАННЯ ТА ЗМІННІ ---
         
+        const terminalOutput = document.getElementById('terminal-output');
+        const agentProfile = document.getElementById('agent-profile');
+        const startMissionBtn = document.getElementById('start-mission-btn');
+        const levelsGrid = document.getElementById('levels-grid');
         const finalForm = document.getElementById('final-form');
         const finalInput = document.getElementById('final-input');
         const submitPhraseBtn = document.getElementById('submit-phrase-btn'); // Кнопка для переможної фрази
         const playerAttackBtn = document.getElementById('player-attack-btn'); // Кнопка атаки гравця
         const bossHpBarFill = document.getElementById('boss-hp-bar-fill'); // Заповнення HP-бару
+        const galleryBtn = document.getElementById('gallery-btn');
+        const backToRewardBtn = document.getElementById('back-to-reward-btn');
         const bossAttackOverlay = document.getElementById('boss-attack-overlay'); // Оверлей для атаки боса
         const backgroundMusic = document.getElementById('background-music'); // Фонова музика
+
+        // Модальні елементи
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modal = document.getElementById('modal');
 
         // Звукові ефекти
         const synth = new Tone.Synth().toDestination();
@@ -301,6 +304,12 @@
              polySynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], 1);
         }
 
+        // Ігровий стан
+        let gameState = {
+            currentLevel: 0,
+            completedLevels: [],
+        };
+
         // Ігровий стан битви
         let bossHP = 100; // Поточне здоров'я боса
         const bossMaxHP = 100; // Максимальне здоров'я боса
@@ -314,6 +323,76 @@
             'BossAttack3.jpg'
         ];
         let currentBossAttackImageIndex = 0; // Для циклічного показу зображень атак
+
+        // Дані про рівні квесту
+        const levels = [
+            {
+                name: "Італія: Вулиця ім. Балеріни-Капуччіни",
+                icon: "👌",
+                situation: "Ти йдеш по розпеченій вулиці, повітря пахне піцою і анархією. Раптом з-за рогу вибігає малий карапуз, складає пальці в божественний жест 👌 і вигукує секретне кодове слово. Згадай його, щоб дезактивувати темпоральну аномалію!",
+                taskType: "input",
+                answer: ["пластеліна", "пластеліно", "пластеліні"],
+                correctFeedback: "ACCESS GRANTED! Ти на крок ближче до перемоги і хамону.",
+                wrongFeedback: "ERROR! Спробуй ще, інакше Всесвіт Мемів назавжди стане нудним."
+            },
+            {
+                name: "Дорогий біч-клаб Пескари",
+                icon: "🏖️",
+                situation: "Сонце, море, і ти в своєму 100500-му купальнику. Повз проходить засмаглий мачо-агент. Він кидає тобі пароль, щоб активувати твій сплячий режим спецагента. Що це за слово?",
+                taskType: "input",
+                answer: ["біч", "bitch", "beach"],
+                correctFeedback: "Пароль прийнято! Твої бойові навички активовані!",
+                wrongFeedback: "Неправильний пароль. Зв'язок втрачено. На тебе вже полюють чайки-шпигуни."
+            },
+            {
+                name: "Париж: Зйомна хата",
+                icon: "😈",
+                situation: "Ви з SerGay в романтичному Парижі. Вночі над вашим ліжком щось нависає. Це не Ейфелева вежа. Що було зображено на картині?",
+                taskType: "input",
+                answer: ["демони", "демон"],
+                correctFeedback: "Правильно! Навіть демони не можуть зіпсувати вам романтику.",
+                wrongFeedback: "Ні, це були не круасани. Спробуй ще раз!"
+            },
+            {
+                name: "Рим: Парканний світ",
+                icon: "🚧",
+                situation: "Агентка Яна намагається подолати перешкоду, але їй потрібна твоя допомога. Вона благально дивиться на тебе і каже: 'Підстрахуй!'. Твої дії?",
+                taskType: "choices",
+                choices: [
+                    { id: "a", text: "втекла в таксі" },
+                    { id: "b", text: "відсьорбнула з бокалу вина" },
+                    { id: "c", text: "сказала “Хто? я?”" },
+                    { id: "d", text: "підстрахувала" }
+                ],
+                answer: "d",
+                correctFeedback: "ТАК! Командна робота — ключ до успіху!",
+                wrongFeedback: "Зрада! Місія під загрозою! Рівень довіри Яни впав до 5%."
+            },
+            {
+                name: "Операція 'Пластиковий Трон'",
+                icon: "🪑",
+                situation: "Останні хвилини перед евакуацією до аеропорту Фьюмічіно. Ти помічаєш безцінний артефакт. Твоя внутрішня клептоманка-колекціонерка ледь не бере гору. Що це було?",
+                taskType: "input",
+                answer: ["пластиковий стілець", "стілець", "крісло", "стульчик"],
+                correctFeedback: "Ти втрималась! Справжній агент вміє контролювати свої імпульси!",
+                wrongFeedback: "Ні, не паспортний контроль. Думай краще!"
+            },
+            {
+                name: "Ватикан: Аудієнція у Папи",
+                icon: "🇻🇦",
+                situation: "Тебе несподівано запросили на секретну аудієнцію до самого Папи Римського! Він виявився класним мужиком і запропонував тобі хильнути по келиху. Що ви пили з Папкою у Ватикані?",
+                taskType: "choices",
+                choices: [
+                    { id: "a", text: "віскі-сауер" },
+                    { id: "b", text: "піну-коладу" },
+                    { id: "c", text: "кокосову воду" },
+                    { id: "d", text: "сльози хлопчиків" }
+                ],
+                answer: "c",
+                correctFeedback: "Саме так! Свята кокосова вода для очищення душі та гарного настрою!",
+                wrongFeedback: "Близько, але ні. Папа не схвалює такий вибір, доню моя."
+            }
+        ];
 
         // --- ФУНКЦІЇ ---
 
@@ -332,6 +411,159 @@
             });
         }
         
+        function typeEffect(element, text, callback) {
+            let i = 0;
+            element.innerHTML = "";
+            const cursor = '<span class="blinking-cursor"></span>';
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    element.innerHTML = text.substring(0, i + 1) + cursor;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    element.innerHTML = text;
+                    if (callback) callback();
+                }
+            }, 50);
+        }
+
+        function startPrologue() {
+            const prologueText = `> INITIATING PROTOCOL JJ-27...\n> SCANNING RETINA... ACCESS GRANTED.\n> ANALYZING AGENT'S ELEGANCE LEVEL... 98.7% (STUNNING).\n> DETECTING TRUE STORIES DATABASE... FULLY LOADED.\n> CHECKING SHRIMP RESERVES... DANGEROUSLY LOW.\n> UPLOADING AGENT PROFILE...`;
+            typeEffect(terminalOutput, prologueText, () => {
+                agentProfile.classList.remove('hidden');
+            });
+        }
+        
+        function updateMap() {
+            levelsGrid.innerHTML = '';
+            levels.forEach((level, index) => {
+                const isCompleted = gameState.completedLevels.includes(index);
+                const isUnlocked = index === 0 || gameState.completedLevels.includes(index - 1);
+
+                const levelButton = document.createElement('button');
+                levelButton.dataset.levelIndex = index;
+                levelButton.disabled = !isUnlocked;
+                
+                let buttonClasses = 'font-game p-6 rounded-lg border-2 flex flex-col items-center justify-center transition-all ';
+                if (isCompleted) {
+                    buttonClasses += 'bg-green-500 border-green-400 text-black cursor-default';
+                } else if (isUnlocked) {
+                    buttonClasses += 'bg-pink-600 border-pink-500 text-white hover:bg-pink-500 animate-pulse';
+                } else {
+                    buttonClasses += 'bg-gray-700 border-gray-600 text-gray-500 cursor-not-allowed';
+                }
+                levelButton.className = buttonClasses;
+                
+                levelButton.innerHTML = `
+                    <span class="text-3xl mb-2">${isUnlocked ? level.icon : '❓'}</span>
+                    <span class="text-xs text-center">${level.name}</span>
+                `;
+
+                if (isUnlocked && !isCompleted) {
+                    levelButton.addEventListener('click', () => {
+                           clickSound();
+                           loadLevel(index);
+                    });
+                }
+                
+                levelsGrid.appendChild(levelButton);
+            });
+
+            if (gameState.completedLevels.length === levels.length) {
+                addFinalBattleButton();
+            }
+        }
+        
+        function addFinalBattleButton() {
+            const finalButton = document.createElement('button');
+            finalButton.className = 'font-game p-6 rounded-lg border-2 flex flex-col items-center justify-center transition-all bg-red-600 border-red-500 text-white hover:bg-red-500 animate-pulse col-span-2 md:col-span-3';
+            finalButton.innerHTML = `
+                <span class="text-3xl mb-2">💥</span>
+                <span class="text-xs text-center">ФІНАЛЬНИЙ БОС</span>
+            `;
+            finalButton.addEventListener('click', () => {
+                clickSound();
+                showScreen('final-battle-screen');
+            });
+            levelsGrid.appendChild(finalButton);
+        }
+
+        function loadLevel(levelIndex) {
+            gameState.currentLevel = levelIndex;
+            const level = levels[levelIndex];
+            const levelContent = document.getElementById('level-content');
+            
+            let taskHtml = '';
+            if (level.taskType === 'input') {
+                taskHtml = `
+                    <form id="level-form">
+                        <input type="text" id="level-input" class="bg-gray-700 border-2 border-gray-600 rounded-lg p-2 text-white w-full max-w-sm text-center" placeholder="Введи відповідь...">
+                        <button type="submit" class="mt-4 font-game bg-green-500 text-black py-2 px-6 rounded-lg hover:bg-green-400 transition-all">ВІДПОВІСТИ</button>
+                    </form>
+                `;
+            } else if (level.taskType === 'choices') {
+                const choicesHtml = level.choices.map(choice => 
+                    `<button class="choice-btn w-full bg-pink-600 text-white p-3 rounded-lg hover:bg-pink-500" data-choice-id="${choice.id}">${choice.text}</button>`
+                ).join('');
+                taskHtml = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">${choicesHtml}</div>`;
+            }
+
+            levelContent.innerHTML = `
+                <h2 class="font-game text-xl md:text-2xl text-pink-500 mb-4">${level.name}</h2>
+                <p class="mb-6 text-gray-300">${level.situation}</p>
+                ${taskHtml}
+            `;
+            
+            showScreen('level-screen');
+
+            if (level.taskType === 'input') {
+                document.getElementById('level-form').addEventListener('submit', handleAnswerSubmit);
+            } else if (level.taskType === 'choices') {
+                document.querySelectorAll('.choice-btn').forEach(btn => {
+                    btn.addEventListener('click', handleChoiceClick);
+                });
+            }
+        }
+        
+        function handleAnswerSubmit(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('level-input').value.trim().toLowerCase();
+            checkAnswer(userInput);
+        }
+        
+        function handleChoiceClick(event) {
+            const userChoice = event.target.dataset.choiceId;
+            checkAnswer(userChoice);
+        }
+
+        function checkAnswer(userAnswer) {
+            const level = levels[gameState.currentLevel];
+            let isCorrect = false;
+
+            if (Array.isArray(level.answer)) {
+                isCorrect = level.answer.includes(userAnswer);
+            } else {
+                isCorrect = userAnswer === level.answer;
+            }
+
+            if (isCorrect) {
+                successSound();
+                showModal(true, level.correctFeedback);
+                if (!gameState.completedLevels.includes(gameState.currentLevel)) {
+                    gameState.completedLevels.push(gameState.currentLevel);
+                }
+            } else {
+                failureSound();
+                showModal(false, level.wrongFeedback);
+            }
+        }
+        
+        function showModal(isCorrect, feedbackText) {
+            modalContent.innerHTML = `<p class="text-lg">${feedbackText}</p>`;
+            modal.className = `w-11/12 max-w-md bg-gray-800 rounded-xl p-6 text-center border-4 ${isCorrect ? 'border-green-500' : 'border-red-500'}`;
+            modalContainer.classList.remove('hidden');
+        }
+
         /**
          * Оновлює візуальне відображення HP-бару боса.
          */
@@ -450,6 +682,19 @@
 
         // --- ОБРОБНИКИ ПОДІЙ ---
 
+        startMissionBtn.addEventListener('click', () => {
+            clickSound();
+            showScreen('map-screen');
+            updateMap();
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            clickSound();
+            modalContainer.classList.add('hidden');
+            showScreen('map-screen');
+            updateMap();
+        });
+
         // Обробник для кнопки атаки гравця
         playerAttackBtn.addEventListener('click', playerAttack);
 
@@ -492,6 +737,16 @@
             }
         });
 
+        galleryBtn.addEventListener('click', () => {
+            clickSound();
+            showScreen('gallery-screen');
+        });
+        
+        backToRewardBtn.addEventListener('click', () => {
+            clickSound();
+            showScreen('reward-screen');
+        });
+
         // --- ІНІЦІАЛІЗАЦІЯ ГРИ ---
         document.body.addEventListener('click', () => {
              Tone.start();
@@ -501,8 +756,9 @@
              }
         }, { once: true });
         
-        // Показуємо екран фінальної битви при завантаженні
-        showScreen('final-battle-screen');
+        // Показуємо екран завантаження при завантаженні
+        showScreen('loader-screen');
+        startPrologue();
         // Оновлюємо HP-бар при старті
         updateBossHPDisplay();
         // Переконайтеся, що поля введення фрази вимкнені на старті
