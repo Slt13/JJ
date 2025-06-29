@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Юля: Мандрівниця між всратими світами</title>
+    
+    <!-- Підключення Tailwind CSS для стилізації -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Підключення шрифтів від Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!-- Підключення Tone.js для звукових ефектів -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+
+    <style>
+        /* Додаємо власні стилі та анімації */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Темний фон */
+            color: #F3F4F6;
+        }
+        .font-game {
+            font-family: 'Press Start 2P', cursive;
+        }
+        /* Анімація для курсора в терміналі (закоментовано, але залишено на випадок потреби) */
+        /*
+        .blinking-cursor {
+            display: inline-block;
+            background-color: #34D399;
+            margin-left: 4px;
+            width: 10px;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { background-color: transparent }
+            50% { background-color: #34D399; }
+        }
+        */
+        /* Стилізація кнопок вибору (закоментовано) */
+        /*
+        .choice-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .choice-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.7);
+        }
+        */
+        /* Клас для приховування екранів */
+        .hidden {
+            display: none;
+        }
+        /* Стилізація модального вікна (закоментовано) */
+        /*
+        #modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 40;
+        }
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+        }
+        */
+
+        /* Стилі для HP-бару */
+        .hp-bar-container {
+            width: 80%;
+            max-width: 500px;
+            height: 25px;
+            background-color: #dc2626; /* Червоний, якщо немає HP */
+            border: 2px solid #ef4444;
+            border-radius: 9999px; /* Fully rounded */
+            overflow: hidden;
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .hp-bar-fill {
+            height: 100%;
+            width: 100%; /* Початкова ширина */
+            background-color: #22c55e; /* Зелений, повний HP */
+            border-radius: 9999px;
+            transition: width 0.5s ease-out, background-color 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827; /* Dark text for readability */
+            font-weight: bold;
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* Стилі для атаки боса (зображення, що з'являється і зникає) */
+        #boss-attack-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: contain; /* Зображення вміщується */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: rgba(0, 0, 0, 0.7); /* Напівпрозорий фон */
+            opacity: 0;
+            transition: opacity 2s ease-out; /* Анімація зникнення, змінено на 2s */
+            z-index: 30; /* Поверх всіх елементів, крім модальних вікон */
+            display: flex; /* Для центрування зображення */
+            align-items: center;
+            justify-content: center;
+            pointer-events: none; /* Дозволяє клікам проходити крізь нього, коли неактивне */
+        }
+        #boss-attack-overlay.active {
+            opacity: 1; /* Зображення повністю видиме */
+        }
+
+        /* Стилі для підсвічування та миготіння поля введення */
+        @keyframes highlight-blink {
+            0% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.5); border-color: #facc15; }
+            50% { box-shadow: 0 0 20px rgba(255, 255, 0, 1); border-color: #facc15; }
+            100% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.5); border-color: #facc15; }
+        }
+        .highlight-blink {
+            animation: highlight-blink 1.5s infinite alternate; /* 1.5s анімація, безкінечно, туди-сюди */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 overflow-hidden">
+    
+    <!-- NEW: Фонова музика. Замініть 'PATH_TO_YOUR_MUSIC.mp3' на реальне посилання -->
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        Ваш браузер не підтримує аудіо.
+    </audio>
+
+    <!-- Головний контейнер для всіх екранів -->
+    <div id="app-container" class="relative w-full h-screen">
+
+        <!-- Екран 1: Завантаження / Пролог (закоментовано) -->
+        <!--
+        <div id="loader-screen" class="w-full h-full flex flex-col items-center justify-center p-4 bg-black">
+            <div class="w-full max-w-2xl font-game text-sm md:text-base text-green-400">
+                <pre id="terminal-output" class="whitespace-pre-wrap"></pre>
+            </div>
+            <div id="agent-profile" class="hidden mt-8 text-center animate-pulse">
+                <img src="https://placehold.co/200x200/EC4899/FFFFFF?text=AGENT+JJ-27" alt="Фото агента Юлі" class="rounded-full border-4 border-pink-500 mx-auto mb-4">
+                <button id="start-mission-btn" class="font-game bg-pink-600 text-white py-2 px-4 rounded-lg hover:bg-pink-700 transition-all">ПОЧАТИ МІСІЮ</button>
+            </div>
+        </div>
+        -->
+
+        <!-- Екран 2: Інтерактивна карта світів (закоментовано) -->
+        <!--
+        <div id="map-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/1F2937/4B5563?text=Карта+Всратосвіту');">
+            <div class="bg-black bg-opacity-70 p-8 rounded-xl shadow-2xl">
+                <h1 class="font-game text-2xl md:text-4xl text-center text-pink-500 mb-8">Карта Всратосвіту</h1>
+                <div id="levels-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                </div>
+            </div>
+        </div>
+        -->
+        
+        <!-- Екран 3: Рівень-квест (контейнер) (закоментовано) -->
+        <!--
+        <div id="level-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-gray-900 bg-opacity-90">
+            <div id="level-content" class="w-full max-w-3xl text-center bg-gray-800 p-8 rounded-xl shadow-2xl border-2 border-pink-500">
+            </div>
+        </div>
+        -->
+        
+        <!-- Екран 4: Фінальна битва -->
+        <div id="final-battle-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-black text-center">
+            <h1 class="font-game text-3xl text-red-500 mb-4 animate-pulse">ФІНАЛЬНА БИТВА!</h1>
+            
+            <!-- Зображення боса -->
+            <!-- Змінено розмір зображення за допомогою Tailwind CSS -->
+            <img src="BossFight.png" alt="Всратий Черв'як" class="mb-4 rounded-lg mx-auto w-full max-w-xl lg:max-w-2xl">
+            
+            <!-- HP-бар боса -->
+            <div class="hp-bar-container">
+                <div id="boss-hp-bar-fill" class="hp-bar-fill">100% HP</div>
+            </div>
+
+            <!-- Опис битви -->
+            <p class="max-w-2xl mx-auto mb-4 text-lg">Перед тобою постає втілення твого найбільшого страху: гігантський, слизький, піксельний **Всратий Черв'як**. Він звивається, а його тіло переливається неприємними відтінками нудно-бежевого. Він погрожує перетворити весь світ на суцільну цитату з пабліка для матусь.</p>
+            <p class="max-w-2xl mx-auto mb-4 text-lg">Але ти, елегантна і безстрашна агентка **JJ-27**, стоїш навпроти в сліпучому бойовому купальнику, озброєна келихом і сарказмом. Ти знаєш секретну фразу-екзорцизм, що здатна вигнати будь-якого розбійника!</p>
+            
+            <form id="final-form" class="flex flex-col items-center gap-4">
+                <button type="button" id="player-attack-btn" class="font-game bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-all shadow-lg">АТАКУВАТИ ЧЕРВ'ЯКА!</button>
+                <input type="text" id="final-input" class="bg-gray-700 border-2 border-gray-600 rounded-lg p-2 text-white w-full max-w-sm text-center" placeholder="Введи переможну фразу..." disabled>
+                <button type="submit" id="submit-phrase-btn" class="font-game bg-green-500 text-black py-2 px-6 rounded-lg hover:bg-green-400 transition-all shadow-lg" disabled>ВИГНАТИ!</button>
+            </form>
+        </div>
+
+        <!-- Екран 5: Нагорода (закоментовано) -->
+        <!--
+        <div id="reward-screen" class="hidden w-full h-full flex flex-col items-center justify-center p-4 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/4C1D95/A78BFA?text=Перемога!');">
+            <div class="bg-black bg-opacity-75 p-10 rounded-xl border-4 border-yellow-400 text-center">
+                <h1 class="font-game text-2xl md:text-3xl text-yellow-400 mb-4">ПЕРЕМОГА!</h1>
+                <h2 class="text-xl md:text-2xl mb-6">Офіційний Диплом</h2>
+                <p class="text-2xl md:text-4xl font-bold text-pink-400 mb-2">Юлії</p>
+                <p class="mb-6">Почесній Сексі-Мандрівниці та Винищувачці Всратих Черв'яків</p>
+                <p class="text-xs text-gray-400 mb-8">Затверджено Радою Євротурчика, Графославом та бокалом вина.</p>
+                <button id="gallery-btn" class="font-game bg-pink-600 text-white py-3 px-6 rounded-lg hover:bg-pink-700 transition-all">
+                    Відкрити тусовочний Всесвіт
+                </button>
+            </div>
+        </div>
+        -->
+        
+        <!-- Екран 6: Галерея (закоментовано) -->
+        <!--
+        <div id="gallery-screen" class="hidden w-full h-full overflow-y-auto p-8 bg-gray-900">
+            <h1 class="font-game text-4xl text-center text-pink-500 mb-8">Тусовочний Всесвіт Юлі</h1>
+            <div class="max-w-6xl mx-auto">
+                <h2 class="font-game text-2xl text-green-400 mb-4">Виконані місії по анігіляції алкогольних напоїв</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+                    <img src="11.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                    <img src="22.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                    <img src="33.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                    <img src="44.jpg" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                </div>
+                <h2 class="font-game text-2xl text-green-400 mb-4">Члени команди агента</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div class="bg-gray-800 p-2 rounded-lg">
+                        <video controls class="w-full rounded-md">
+                            <source src="111.mp4" type="video/mp4">
+                            Ваш браузер не підтримує відео.
+                        </video>
+                        <p class="text-center mt-2">Міжнародна співпраця з агентами Інтерполу</p>
+                    </div>
+                    <div class="bg-gray-800 p-2 rounded-lg">
+                        <video controls class="w-full rounded-md">
+                            <source src="222.mp4" type="video/mp4">
+                            Ваш браузер не підтримує відео.
+                        </video>
+                        <p class="text-center mt-2">Втирання в довіру під прикриттям</p>
+                    </div>
+                </div>
+                <h2 class="font-game text-2xl text-green-400 mb-4">Фейкові нагороди</h2>
+                <div class="space-y-4 text-lg">
+                    <p class="bg-gray-800 p-3 rounded-lg">🏅 Орден "Пластикового Стільця І ступеня"</p>
+                    <p class="bg-gray-800 p-3 rounded-lg">🏅 Медаль "За взяття паркану"</p>
+                    <p class="bg-gray-800 p-3 rounded-lg">🏆 Премія "Міс Крєветка 2025"</p>
+                </div>
+            </div>
+            <button id="back-to-reward-btn" class="font-game fixed top-4 right-4 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-all">Назад</button>
+        </div>
+        -->
+
+        <!-- Модальне вікно для результатів (закоментовано) -->
+        <!--
+        <div id="modal-container" class="hidden">
+            <div id="modal-backdrop"></div>
+            <div id="modal" class="w-11/12 max-w-md bg-gray-800 rounded-xl p-6 text-center border-4">
+                <div id="modal-content"></div>
+                <button id="modal-close-btn" class="mt-6 font-game bg-pink-600 text-white py-2 px-6 rounded-lg hover:bg-pink-700 transition-all">ДАЛІ</button>
+            </div>
+        </div>
+        -->
+
+        <!-- Оверлей для атак боса -->
+        <div id="boss-attack-overlay"></div>
+
+    </div>
+
+    <script>
+        // --- ГЛОБАЛЬНІ НАЛАШТУВАННЯ ТА ЗМІННІ ---
+        
+        const finalForm = document.getElementById('final-form');
+        const finalInput = document.getElementById('final-input');
+        const submitPhraseBtn = document.getElementById('submit-phrase-btn'); // Кнопка для переможної фрази
+        const playerAttackBtn = document.getElementById('player-attack-btn'); // Кнопка атаки гравця
+        const bossHpBarFill = document.getElementById('boss-hp-bar-fill'); // Заповнення HP-бару
+        const bossAttackOverlay = document.getElementById('boss-attack-overlay'); // Оверлей для атаки боса
+        const backgroundMusic = document.getElementById('background-music'); // Фонова музика
+
+        // Звукові ефекти
+        const synth = new Tone.Synth().toDestination();
+        const clickSound = () => synth.triggerAttackRelease("C4", "8n");
+        const successSound = () => {
+            const synth = new Tone.Synth().toDestination();
+            synth.triggerAttackRelease("C5", "8n", Tone.now());
+            synth.triggerAttackRelease("E5", "8n", Tone.now() + 0.1);
+            synth.triggerAttackRelease("G5", "8n", Tone.now() + 0.2);
+        };
+        const failureSound = () => {
+            const synth = new Tone.FMSynth().toDestination();
+            synth.triggerAttackRelease("A2", "4n");
+        };
+        const winSound = () => {
+             const polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+             polySynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], 1);
+        }
+
+        // Ігровий стан битви
+        let bossHP = 100; // Поточне здоров'я боса
+        const bossMaxHP = 100; // Максимальне здоров'я боса
+        const playerAttackDamage = 25; // Скільки HP знімає одна атака гравця
+        const winningPhraseThreshold = 25; // Відсоток HP, при якому можна ввести фразу
+
+        // Зображення для атаки боса (шляхи до файлів у тій самій папці)
+        const bossAttackImages = [
+            'BossAttack1.jpg',
+            'BossAttack2.jpg',
+            'BossAttack3.jpg'
+        ];
+        let currentBossAttackImageIndex = 0; // Для циклічного показу зображень атак
+
+        // --- ФУНКЦІЇ ---
+
+        /**
+         * Перемикає видимість екранів.
+         * @param {string} screenId ID екрану, який потрібно показати.
+         */
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('#app-container > div');
+            screens.forEach(screen => {
+                if (screen.id === screenId) {
+                    screen.classList.remove('hidden');
+                } else {
+                    screen.classList.add('hidden');
+                }
+            });
+        }
+        
+        /**
+         * Оновлює візуальне відображення HP-бару боса.
+         */
+        function updateBossHPDisplay() {
+            const hpPercentage = (bossHP / bossMaxHP) * 100;
+            bossHpBarFill.style.width = `${hpPercentage}%`;
+            bossHpBarFill.textContent = `${Math.max(0, bossHP)}% HP`; // Забезпечуємо, що HP не йде в мінус
+
+            // Змінюємо колір HP-бару залежно від відсотка HP
+            if (hpPercentage > 50) {
+                bossHpBarFill.style.backgroundColor = '#22c55e'; // Зелений
+            } else if (hpPercentage > 25) {
+                bossHpBarFill.style.backgroundColor = '#facc15'; // Жовтий
+                bossHpBarFill.style.color = '#111827'; // Dark text for readability
+            } else {
+                bossHpBarFill.style.backgroundColor = '#dc2626'; // Червоний
+                bossHpBarFill.style.color = '#F3F4F6'; // Light text for readability
+            }
+
+            // Перевіряємо, чи настав час для переможної фрази
+            if (bossHP <= winningPhraseThreshold) {
+                finalInput.disabled = false;
+                submitPhraseBtn.disabled = false;
+                playerAttackBtn.disabled = true; // Вимикаємо кнопку атаки
+                finalInput.placeholder = "Введи переможну фразу!";
+                playerAttackBtn.classList.add('opacity-50', 'cursor-not-allowed'); // Зменшуємо прозорість кнопки атаки
+                submitPhraseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                finalInput.classList.add('highlight-blink'); // Додаємо клас для підсвічування/миготіння
+            } else {
+                finalInput.disabled = true;
+                submitPhraseBtn.disabled = true;
+                finalInput.placeholder = "Зменш HP боса, щоб ввести фразу...";
+                submitPhraseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                finalInput.classList.remove('highlight-blink'); // Видаляємо клас, якщо умова не виконується
+            }
+        }
+
+        /**
+         * Обробляє атаку гравця.
+         */
+        function playerAttack() {
+            clickSound();
+            
+            // Якщо HP вже низьке і фразу потрібно вводити, не дозволяємо атакувати
+            if (bossHP <= winningPhraseThreshold && bossHP > 0) {
+                alert("HP боса достатньо низьке! Введіть переможну фразу!");
+                return;
+            } else if (bossHP <= 0) {
+                 // Якщо бос вже мертвий, не дозволяємо атакувати
+                return;
+            }
+
+            playerAttackBtn.disabled = true; // Вимикаємо кнопку атаки під час ходу
+            submitPhraseBtn.disabled = true; // Вимикаємо кнопку фрази під час ходу
+            playerAttackBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            submitPhraseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            bossHP -= playerAttackDamage; // Знімаємо 25 HP
+            if (bossHP < 0) bossHP = 0; // Запобігаємо від'ємному HP
+            updateBossHPDisplay();
+            successSound();
+
+            // Бос контратакує, якщо його HP > 0 після атаки гравця
+            if (bossHP > 0) {
+                setTimeout(bossAttack, 1000); // Затримка 1 секунда перед атакою боса
+            } else {
+                // Якщо бос помер від атаки, дозволяємо ввести фразу (або переходимо до перемоги)
+                finalInput.disabled = false;
+                submitPhraseBtn.disabled = false;
+                finalInput.placeholder = "Введи переможну фразу!";
+                submitPhraseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                playerAttackBtn.classList.add('opacity-50', 'cursor-not-allowed'); // Деактивуємо кнопку атаки
+                winSound(); // Можливо, відтворити звук перемоги
+                alert("Бос переможений! Введіть переможну фразу, щоб завершити!");
+            }
+        }
+
+        /**
+         * Обробляє атаку боса.
+         */
+        function bossAttack() {
+            failureSound(); // Звук атаки боса (можна замінити на інший)
+
+            // Вибираємо наступне зображення атаки
+            const attackImageUrl = bossAttackImages[currentBossAttackImageIndex];
+            bossAttackOverlay.style.backgroundImage = `url('${attackImageUrl}')`;
+            bossAttackOverlay.classList.add('active'); // Робимо оверлей видимим (opacity 1)
+
+            // Перемикаємо на наступне зображення для наступної атаки
+            currentBossAttackImageIndex = (currentBossAttackImageIndex + 1) % bossAttackImages.length;
+
+            // Через 2 секунди (час видимості) починаємо зникати
+            setTimeout(() => {
+                bossAttackOverlay.classList.remove('active'); // Запускаємо анімацію зникнення (opacity 0)
+                // Після завершення анімації зникнення (2 секунди),
+                // робимо оверлей прихованим повністю і дозволяємо гравцеві атакувати, якщо потрібно
+                setTimeout(() => {
+                    // Якщо бос все ще живий і не досяг порогу переможної фрази, дозволяємо атакувати
+                    if (bossHP > winningPhraseThreshold) {
+                        playerAttackBtn.disabled = false; // Знову дозволяємо гравцеві атакувати
+                        playerAttackBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else if (bossHP <= winningPhraseThreshold && bossHP > 0) {
+                        // Якщо HP <= 25%, але ще не 0, дозволяємо ввести фразу
+                        finalInput.disabled = false;
+                        submitPhraseBtn.disabled = false;
+                        submitPhraseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else if (bossHP <= 0) {
+                        // Якщо бос помер, залишаємо кнопки атаки та фрази вимкненими
+                        playerAttackBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        submitPhraseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                }, 2000); // Таймаут відповідає тривалості CSS transition (2s)
+            }, 2000); // Час, протягом якого зображення атаки повністю видиме
+        }
+
+
+        // --- ОБРОБНИКИ ПОДІЙ ---
+
+        // Обробник для кнопки атаки гравця
+        playerAttackBtn.addEventListener('click', playerAttack);
+
+        // Обробник для форми введення переможної фрази
+        finalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const finalAnswers = ["вийди отсюда, розбійник", "вийди отсюда розбійник", "вийди отсюда, розбійник!"];
+            const userInput = finalInput.value.trim().toLowerCase();
+            
+            // Тепер фразу можна вводити тільки коли HP <= winningPhraseThreshold
+            if (bossHP > winningPhraseThreshold && bossHP > 0) {
+                // Зарано для переможної фрази
+                failureSound();
+                finalInput.classList.add('animate-bounce', 'border-red-500');
+                finalInput.placeholder = "Ще зарано! Атакуй ще!";
+                setTimeout(() => {
+                    finalInput.classList.remove('animate-bounce', 'border-red-500');
+                    finalInput.placeholder = "Введи переможну фразу...";
+                    finalInput.value = "";
+                }, 1500);
+                return; // Виходимо
+            }
+
+            // Якщо HP <= winningPhraseThreshold, перевіряємо фразу
+            if (finalAnswers.includes(userInput)) {
+                winSound();
+                // Припускаємо, що reward-screen існує і є екраном перемоги
+                showScreen('reward-screen'); 
+                // Виводимо просте повідомлення, оскільки модальні вікна закоментовані
+                alert("ПЕРЕМОГА! Всратий Черв'як вигнаний!");
+            } else {
+                failureSound();
+                finalInput.classList.add('animate-bounce', 'border-red-500');
+                finalInput.placeholder = "НЕПРАВИЛЬНО! Спробуй ще!";
+                setTimeout(() => {
+                    finalInput.classList.remove('animate-bounce', 'border-red-500');
+                    finalInput.placeholder = "Введи переможну фразу...";
+                    finalInput.value = "";
+                }, 1500);
+            }
+        });
+
+        // --- ІНІЦІАЛІЗАЦІЯ ГРИ ---
+        document.body.addEventListener('click', () => {
+             Tone.start();
+             // NEW: Запускаємо музику при першому кліку
+             if (backgroundMusic.paused) {
+                 backgroundMusic.play().catch(e => console.error("Autoplay was prevented:", e));
+             }
+        }, { once: true });
+        
+        // Показуємо екран фінальної битви при завантаженні
+        showScreen('final-battle-screen');
+        // Оновлюємо HP-бар при старті
+        updateBossHPDisplay();
+        // Переконайтеся, що поля введення фрази вимкнені на старті
+        finalInput.disabled = true;
+        submitPhraseBtn.disabled = true;
+        submitPhraseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+    </script>
+</body>
+</html>
