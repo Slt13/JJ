@@ -130,24 +130,29 @@
         /* Стилі для регулятора гучності */
         #volume-control-container {
             position: absolute;
-            bottom: 1rem; /* Змінено з 'top' на 'bottom' */
+            top: 1rem; /* Змінено з 'bottom' на 'top' */
             right: 1rem;
             display: flex;
+            flex-direction: column; /* Зроблено вертикальним */
             align-items: center;
             gap: 0.5rem;
             background-color: rgba(0, 0, 0, 0.5);
-            padding: 0.5rem 0.75rem;
+            padding: 0.75rem 0.5rem; /* Змінено padding для вертикальної орієнтації */
             border-radius: 9999px; /* Fully rounded */
             z-index: 50; /* Поверх інших елементів, але під модальним вікном */
         }
         #volume-slider {
-            width: 80px;
-            height: 4px; /* Тонша лінія */
+            width: 4px; /* Зменшено ширину */
+            height: 80px; /* Збільшено висоту для вертикальної орієнтації */
             -webkit-appearance: none; /* Видалити стандартний вигляд */
             background: #4B5563; /* Колір треку */
             outline: none;
             border-radius: 2px;
             cursor: pointer;
+            transform: rotate(180deg); /* Обертаємо для вертикального вигляду */
+            -webkit-transform: rotate(180deg); /* Для Webkit-браузерів */
+            /* Додано transform-origin для коректного обертання, якщо потрібно */
+            transform-origin: 50% 50%;
         }
         #volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -231,7 +236,7 @@
 
             <!-- Опис битви -->
             <p class="max-w-2xl mx-auto mb-4 text-lg">Перед тобою постає втілення твого найбільшого страху: гігантський, слизький, піксельний **Всратий Черв'як**. Він звивається, а його тіло переливається неприємними відтінками нудно-бежевого. Він погрожує перетворити весь світ на суцільну цитату з пабліка для матусь.</p>
-            <p class="max-w-2xl mx-auto mb-4 text-lg">Але ти, елегантна і безстрашна агентка **JJ-27**, стоїш навпроти в сліпучому бойовому купальнику, озброєна келихом і сарказмом. Ти знаєш секретну фразу-екзорцизм, що здатна вигнати будь-якого розбійника!</p>
+            <p class="max-w-2xl mx-auto mb-4 text-lg">Але ти, елегантна і безстрашна агентка JJ-27, стоїш навпроти в сліпучому бойовому купальнику, озброєна келихом і сарказмом. Ослаб БОСА атаками, щоб отримати можливість вигнати його однією фразою. Ти знаєш секретну фразу-екзорцизм, що здатна вигнати будь-якого розбійника!</p>
             
             <form id="final-form" class="flex flex-col items-center gap-4">
                 <button type="button" id="player-attack-btn" class="font-game bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-all shadow-lg">АТАКУВАТИ ЧЕРВ'ЯКА!</button>
