@@ -125,6 +125,47 @@
         .highlight-blink {
             animation: highlight-blink 1.5s infinite alternate; /* 1.5s анімація, безкінечно, туди-сюди */
         }
+
+        /* Стилі для регулятора гучності */
+        #volume-control-container {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem 0.75rem;
+            border-radius: 9999px; /* Fully rounded */
+            z-index: 50; /* Поверх інших елементів, але під модальним вікном */
+        }
+        #volume-slider {
+            width: 80px;
+            height: 4px; /* Тонша лінія */
+            -webkit-appearance: none; /* Видалити стандартний вигляд */
+            background: #4B5563; /* Колір треку */
+            outline: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px; /* Розмір повзунка */
+            height: 16px;
+            background: #EC4899; /* Колір повзунка (рожевий) */
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(236, 72, 153, 0.7);
+        }
+        #volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #EC4899;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(236, 72, 153, 0.7);
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 overflow-hidden">
@@ -137,6 +178,12 @@
 
     <!-- Головний контейнер для всіх екранів -->
     <div id="app-container" class="relative w-full h-screen">
+
+        <!-- Регулятор гучності -->
+        <div id="volume-control-container">
+            <span class="text-white text-lg">🔊</span> <!-- Іконка гучності -->
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        </div>
 
         <!-- Екран 1: Завантаження / Пролог -->
         <div id="loader-screen" class="w-full h-full flex flex-col items-center justify-center p-4 bg-black">
@@ -279,6 +326,7 @@
         const backToRewardBtn = document.getElementById('back-to-reward-btn');
         const bossAttackOverlay = document.getElementById('boss-attack-overlay'); // Оверлей для атаки боса
         const backgroundMusic = document.getElementById('background-music'); // Фонова музика
+        const volumeSlider = document.getElementById('volume-slider'); // Регулятор гучності
 
         // Модальні елементи
         const modalContainer = document.getElementById('modal-container');
@@ -329,7 +377,7 @@
             {
                 name: "Італія: Вулиця ім. Балеріни-Капуччіни",
                 icon: "👌",
-                situation: "Ти йдеш по розпеченій вулиці, повітря пахне піцою і анархією. Раптом з-за рогу вибігає малий карапуз, складає пальці в божественний жест 👌 і вигукує секретне кодове слово. Згадай його, щоб дезактивувати темпоральну аномалію!",
+                situation: "Ти йдеш по розпеченій вулиці, повітря пахне піцою і анархією. Раптом з-за рогу вибігає малий карапуз, складає пальці в божественний жест � і вигукує секретне кодове слово. Згадай його, щоб дезактивувати темпоральну аномалію!",
                 taskType: "input",
                 answer: ["пластеліна", "пластеліно", "пластеліні"],
                 correctFeedback: "ACCESS GRANTED! Ти на крок ближче до перемоги і хамону.",
@@ -409,6 +457,17 @@
                     screen.classList.add('hidden');
                 }
             });
+
+            // Логіка зміни музики при зміні екрану
+            if (screenId === 'final-battle-screen') {
+                backgroundMusic.src = 'BossFight.mp3';
+                backgroundMusic.play().catch(e => console.error("Autoplay was prevented:", e));
+            } else if (screenId === 'reward-screen' || screenId === 'gallery-screen') {
+                // Після перемоги музика повністю вимикається
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0; // Скидаємо позицію відтворення
+            }
+            // Видалено умову для повернення до music.mp3 на map-screen та loader-screen
         }
         
         function typeEffect(element, text, callback) {
@@ -432,6 +491,8 @@
             typeEffect(terminalOutput, prologueText, () => {
                 agentProfile.classList.remove('hidden');
             });
+            // Переконатися, що музика для прологу встановлена (якщо вона має бути music.mp3)
+            backgroundMusic.src = 'music.mp3';
         }
         
         function updateMap() {
@@ -483,7 +544,7 @@
             `;
             finalButton.addEventListener('click', () => {
                 clickSound();
-                showScreen('final-battle-screen');
+                showScreen('final-battle-screen'); // showScreen вже обробить зміну музики
             });
             levelsGrid.appendChild(finalButton);
         }
@@ -638,6 +699,8 @@
                 playerAttackBtn.classList.add('opacity-50', 'cursor-not-allowed'); // Деактивуємо кнопку атаки
                 winSound(); // Можливо, відтворити звук перемоги
                 alert("Бос переможений! Введіть переможну фразу, щоб завершити!");
+                backgroundMusic.pause(); // Зупиняємо музику після перемоги
+                backgroundMusic.currentTime = 0;
             }
         }
 
@@ -691,7 +754,7 @@
         modalCloseBtn.addEventListener('click', () => {
             clickSound();
             modalContainer.classList.add('hidden');
-            showScreen('map-screen');
+            showScreen('map-screen'); // Повертаємось на карту, музика не буде змінюватись
             updateMap();
         });
 
@@ -701,7 +764,7 @@
         // Обробник для форми введення переможної фрази
         finalForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const finalAnswers = ["вийди отсюда, розбійник", "вийди отсюда розбійник", "вийди отсюда, розбійник!"];
+            const finalAnswers = ["вийди отсюда, розбійник", "вийди отсюда розбійник", "війди отсюда, розбійник!"];
             const userInput = finalInput.value.trim().toLowerCase();
             
             // Тепер фразу можна вводити тільки коли HP <= winningPhraseThreshold
@@ -725,6 +788,8 @@
                 showScreen('reward-screen'); 
                 // Виводимо просте повідомлення, оскільки модальні вікна закоментовані
                 alert("ПЕРЕМОГА! Всратий Черв'як вигнаний!");
+                backgroundMusic.pause(); // Зупиняємо музику після перемоги
+                backgroundMusic.currentTime = 0;
             } else {
                 failureSound();
                 finalInput.classList.add('animate-bounce', 'border-red-500');
@@ -747,6 +812,11 @@
             showScreen('reward-screen');
         });
 
+        // Обробник для регулятора гучності
+        volumeSlider.addEventListener('input', () => {
+            backgroundMusic.volume = volumeSlider.value;
+        });
+
         // --- ІНІЦІАЛІЗАЦІЯ ГРИ ---
         document.body.addEventListener('click', () => {
              Tone.start();
@@ -756,6 +826,10 @@
              }
         }, { once: true });
         
+        // Встановлюємо початкову гучність для повзунка та музики
+        // Це важливо, щоб повзунок відповідав фактичній гучності, навіть якщо музика ще не грала
+        backgroundMusic.volume = volumeSlider.value; 
+
         // Показуємо екран завантаження при завантаженні
         showScreen('loader-screen');
         startPrologue();
@@ -769,3 +843,4 @@
     </script>
 </body>
 </html>
+�
